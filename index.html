@@ -176,7 +176,6 @@
 </div>
 
 <script>
-    // La lógica de JavaScript se mantiene exactamente igual a la tuya para no romper ninguna función
     const fmt = (n) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(n);
     let dbProductos = JSON.parse(localStorage.getItem('db_eleventa')) || [];
     let miLista = [];
@@ -297,6 +296,16 @@
     function agregarALista() {
         const nPrecio = parseFloat(document.getElementById('precioHoy').value) || seleccionado.costo;
         const cant = parseInt(document.getElementById('cantHoy').value) || 1;
+        
+        // --- CORRECCIÓN: Actualizar el precio en la base de datos principal ---
+        const idx = dbProductos.findIndex(p => p.cod === seleccionado.cod);
+        if (idx !== -1) {
+            dbProductos[idx].costo = nPrecio;
+            dbProductos[idx].proveedor = document.getElementById('provActual').value;
+            dbProductos[idx].depto = document.getElementById('catActual').value;
+            localStorage.setItem('db_eleventa', JSON.stringify(dbProductos));
+        }
+
         miLista.push({
             cod: seleccionado.cod, nombre: seleccionado.nombre, costo: nPrecio,
             venta: esAlta ? seleccionado.venta : Math.round(nPrecio * 1.30),
@@ -360,6 +369,7 @@
     function descargarCSV() {
         if(dbProductos.length === 0) return alert("No hay productos");
         let csv = "Codigo,Descripcion,PrecioCosto,PrecioVenta,PrecioMayoreo,Inventario,Inv. Minimo,Departamento,Proveedor\n";
+        // --- USAR LOS DATOS ACTUALIZADOS DE dbProductos ---
         csv += dbProductos.map(p => `${p.cod},${p.nombre},${p.costo},${p.venta},0,0,0,${p.depto || 'Varios'},${p.proveedor || 'Varios'}`).join("\n");
         const blob = new Blob([csv], { type: 'text/csv' });
         const a = document.createElement('a');
