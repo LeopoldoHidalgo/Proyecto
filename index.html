@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Business Tool - Control Panel</title>
+    <title>Business Tool - Versión Estable</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
     
@@ -18,37 +18,27 @@
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
             background-color: var(--grosella-negra);
-            display: flex; justify-content: center; padding: 20px; margin: 0; min-height: 100vh;
+            display: flex; justify-content: center; padding: 15px; margin: 0; min-height: 100vh;
         }
 
         .container {
-            width: 100%; max-width: 500px; background: white; padding: 25px;
+            width: 100%; max-width: 500px; background: white; padding: 20px;
             border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); position: relative;
         }
 
-        /* --- NUEVO PANEL DE ACCIONES SUPERIOR --- */
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .header-actions { display: flex; gap: 15px; }
 
         .icon-btn { 
-            background: none; border: none; font-size: 20px; 
+            background: none; border: none; font-size: 22px; 
             color: #ccc; cursor: pointer; transition: 0.3s;
         }
-        .icon-btn:hover { color: var(--rojo-intenso); transform: scale(1.1); }
-        
-        /* Estilo especial para resaltar el botón de cámara */
-        .cam-btn { color: var(--grosella-negra); font-size: 22px; }
-        .cam-btn:hover { color: var(--naranja); }
+        .icon-btn:hover { color: var(--rojo-intenso); }
+        .cam-btn { color: var(--grosella-negra); }
 
-        h2 { text-align: center; color: var(--grosella-negra); font-weight: 900; margin: 10px 0 25px 0; }
+        h2 { text-align: center; color: var(--grosella-negra); font-weight: 900; margin: 5px 0 20px 0; font-size: 1.4rem; }
 
-        /* VISOR DE CÁMARA MEJORADO */
+        /* VISOR DE CÁMARA */
         #scanner-container {
             display: none; width: 100%; height: 200px; background: black;
             border-radius: 15px; overflow: hidden; margin-bottom: 15px; position: relative;
@@ -59,26 +49,23 @@
             background: red; box-shadow: 0 0 8px red; z-index: 10;
         }
 
-        /* FILAS DE DATOS */
         .config-bar { display: flex; gap: 8px; margin-bottom: 15px; }
-        select { flex: 1; padding: 10px; border-radius: 10px; border: 2px solid #eee; font-size: 13px; outline: none; }
+        select { flex: 1; padding: 10px; border-radius: 10px; border: 2px solid #eee; outline: none; font-size: 12px; }
 
         .search-row { display: flex; gap: 8px; margin-bottom: 10px; }
         .group-busqueda { flex: 2; position: relative; }
-        .group-input { width: 80px; }
+        .group-input { width: 75px; }
         
         label { font-size: 10px; font-weight: 800; color: var(--rojo-intenso); display: block; margin-bottom: 4px; text-transform: uppercase; }
         input { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 10px; font-size: 14px; box-sizing: border-box; outline: none; }
         input:focus { border-color: var(--naranja); background-color: #fffdfb; }
 
-        /* PANELES DE INFORMACIÓN */
         .sugerencias-panel {
             position: absolute; top: 100%; left: 0; right: 0; background: white;
             border: 1px solid #eee; z-index: 100; display: none; border-radius: 12px;
             box-shadow: 0 10px 20px rgba(0,0,0,0.15); max-height: 200px; overflow-y: auto;
         }
         .sugerencia-item { padding: 12px; border-bottom: 1px solid #f9f9f9; cursor: pointer; font-size: 13px; }
-        .sugerencia-item:hover { background: var(--rosa); }
 
         #formAlta { display: none; background: #fff5f5; padding: 15px; border-radius: 15px; border: 2px dashed var(--rosa); margin: 15px 0; }
         .card-info { background: #f8fafc; border-radius: 15px; padding: 15px; margin: 15px 0; border-left: 5px solid var(--grosella-negra); display: none; }
@@ -86,29 +73,25 @@
         .total-header { margin-top: 20px; padding: 15px 0; border-top: 2px solid #eee; display: flex; justify-content: space-between; align-items: center; }
         .total-monto { font-size: 1.8rem; color: var(--grosella-negra); font-weight: 900; }
         
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; }
         td { padding: 10px 5px; font-size: 14px; border-bottom: 1px solid #f0f0f0; }
 
-        .btn-action { width: 100%; padding: 15px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .btn-blue { background: var(--rojo-intenso); color: white; }
+        .btn-action { width: 100%; padding: 15px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; background: var(--rojo-intenso); color: white; }
 
-        @media print { .top-bar, .config-bar, .search-row, #formAlta, .card-info, .btn-action, .btn-del, #scanner-container { display: none !important; } .container { box-shadow: none; max-width: 100%; } }
+        @media print { .top-bar, .config-bar, .search-row, #formAlta, #scanner-container, .btn-action, .card-info, .btn-del { display: none !important; } }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="top-bar">
-        <button class="icon-btn cam-btn" onclick="encenderCamara()" title="Escanear con Cámara">
-            <i class="fa-solid fa-camera"></i>
-        </button>
-        
+        <button class="icon-btn cam-btn" onclick="toggleCamara()"><i class="fa-solid fa-camera" id="camIcon"></i></button>
         <div class="header-actions">
-            <button class="icon-btn" onclick="descargarCSV()" title="Descargar BD"><i class="fa-solid fa-cloud-arrow-down"></i></button>
-            <button class="icon-btn" onclick="document.getElementById('inputArchivo').click()" title="Configuración / Cargar CSV"><i class="fa-solid fa-gear"></i></button>
+            <button class="icon-btn" onclick="descargarCSV()"><i class="fa-solid fa-cloud-arrow-down"></i></button>
+            <button class="icon-btn" onclick="document.getElementById('inputArchivo').click()"><i class="fa-solid fa-gear"></i></button>
         </div>
     </div>
-    
+
     <input type="file" id="inputArchivo" style="display:none" accept=".csv" onchange="importarCSV(event)">
 
     <h2>🛒 Compra y Alta</h2>
@@ -119,128 +102,162 @@
         <select id="provActual">
             <option value="Zorro Abarrotero">Zorro Abarrotero</option>
             <option value="Aurrera">Aurrera</option>
-            <option value="Walmart">Walmart</option>
             <option value="Coca-Cola">Coca-Cola</option>
         </select>
         <select id="catActual">
             <option value="Abarrotes">Abarrotes</option>
-            <option value="Lacteos">Lacteos</option>
             <option value="Bebidas">Bebidas</option>
-            <option value="Limpieza">Limpieza</option>
         </select>
     </div>
 
     <div class="search-row">
         <div class="group-busqueda">
-            <label>Codigo de Barras:</label>
-            <input type="text" id="buscador" placeholder="Escribe o escanea..." oninput="filtrar()" onkeydown="teclaBuscador(event)" autocomplete="off">
+            <label>Código:</label>
+            <input type="text" id="buscador" placeholder="Escanear..." autocomplete="off">
             <div id="panelSugerencias" class="sugerencias-panel"></div>
         </div>
         <div class="group-input">
             <label>Cant:</label>
-            <input type="number" id="cantHoy" value="1" onkeydown="saltoEnter(event, 'precioHoy')">
+            <input type="number" id="cantHoy" value="1">
         </div>
         <div class="group-input">
             <label>Costo:</label>
-            <input type="number" id="precioHoy" placeholder="0.00" onkeydown="teclaPrecio(event)" oninput="comparar()">
+            <input type="number" id="precioHoy" placeholder="0.00">
         </div>
     </div>
 
     <div id="formAlta">
-        <label style="color:var(--naranja)">✨ Nombre del Producto:</label>
-        <input type="text" id="altaNombre" placeholder="Descripción completa" onkeydown="saltoEnter(event, 'cantHoy')">
+        <label>✨ Nombre:</label>
+        <input type="text" id="altaNombre" placeholder="Descripción">
         <div style="margin-top:10px">
-            <label>Precio Venta Sugerido:</label>
-            <input type="number" id="altaPublico" placeholder="0.00" onkeydown="teclaVentaFinal(event)">
+            <label>Precio Venta:</label>
+            <input type="number" id="altaPublico" placeholder="0.00">
         </div>
     </div>
 
     <div id="card" class="card-info">
-        <div style="display: flex; justify-content: space-between;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
             <div>
                 <div id="txtNombre" style="font-weight:800; color: var(--grosella-negra);"></div>
-                <div id="txtProvAnt" style="font-size:11px; color:#666; margin-top:4px;"></div>
+                <div id="txtProvAnt" style="font-size:11px; color:#666;"></div>
             </div>
             <div style="text-align: right;">
                 <label>Anterior</label>
-                <span id="txtCostoAnt" style="font-size: 1.1rem; font-weight: 800;">$0.00</span>
+                <span id="txtCostoAnt" style="font-size: 1rem; font-weight: 800;">$0.00</span>
                 <div id="txtDif" style="font-size: 0.7rem;"></div>
             </div>
         </div>
     </div>
 
     <div class="total-header">
-        <span style="font-weight:bold">Total Compra</span>
+        <span style="font-weight:bold">Total</span>
         <span class="total-monto" id="sumaTotal">$0.00</span>
     </div>
     
     <table id="listaTabla"></table>
-
-    <button class="btn-action btn-blue" onclick="window.print()"><i class="fa-solid fa-print"></i> Imprimir Ticket</button>
+    <button class="btn-action" onclick="window.print()"><i class="fa-solid fa-print"></i> Imprimir</button>
 </div>
 
 <script>
-    // --- LÓGICA DE NEGOCIO ---
     const fmt = (n) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(n);
     let dbProductos = JSON.parse(localStorage.getItem('db_eleventa')) || [];
     let miLista = [];
     let seleccionado = null;
     let esAlta = false;
+    let camaraEncendida = false;
 
-    // --- ESCÁNER ---
-    function encenderCamara() {
-        const container = document.getElementById('scanner-container');
-        container.style.display = 'block';
-
-        Quagga.init({
-            inputStream: {
-                name: "Live",
-                type: "LiveStream",
-                target: container,
-                constraints: { facingMode: "environment" }
-            },
-            decoder: { readers: ["ean_reader", "ean_8_reader", "code_128_reader"] }
-        }, function(err) {
-            if (err) { alert("Cámara no disponible"); return; }
-            Quagga.start();
-        });
-
-        Quagga.onDetected((data) => {
-            const code = data.codeResult.code;
-            if (code) {
-                document.getElementById('buscador').value = code;
-                Quagga.stop();
-                container.style.display = 'none';
-                procesarBusqueda(code);
-            }
-        });
-    }
-
-    function procesarBusqueda(codigo) {
-        const p = dbProductos.find(x => x.cod === codigo);
-        if (p) { seleccionar(p.cod); } 
-        else {
-            esAlta = true;
-            document.getElementById('formAlta').style.display = 'block';
-            document.getElementById('card').style.display = 'none';
-            document.getElementById('altaNombre').focus();
+    // --- CÁMARA ESTABLE ---
+    function toggleCamara() {
+        if (camaraEncendida) {
+            Quagga.stop();
+            document.getElementById('scanner-container').style.display = 'none';
+            camaraEncendida = false;
+        } else {
+            const container = document.getElementById('scanner-container');
+            container.style.display = 'block';
+            Quagga.init({
+                inputStream: { name: "Live", type: "LiveStream", target: container, constraints: { facingMode: "environment" } },
+                decoder: { readers: ["ean_reader", "ean_8_reader", "code_128_reader"] }
+            }, (err) => {
+                if (err) { alert("Error de cámara"); return; }
+                Quagga.start();
+                camaraEncendida = true;
+            });
         }
     }
 
-    // --- RESTO DE FUNCIONES ---
-    function filtrar() {
-        const q = document.getElementById('buscador').value.toLowerCase();
-        const panel = document.getElementById('panelSugerencias');
-        if (q.length < 2) { panel.style.display = 'none'; return; }
-        const f = dbProductos.filter(p => p.nombre.toLowerCase().includes(q) || (p.cod && p.cod.includes(q))).slice(0, 5);
-        if (f.length > 0) {
-            panel.innerHTML = f.map(p => `<div class="sugerencia-item" onclick="seleccionar('${p.cod}')"><b>${p.cod}</b> - ${p.nombre}</div>`).join('');
-            panel.style.display = 'block';
-        } else { panel.style.display = 'none'; }
+    Quagga.onDetected((data) => {
+        const code = data.codeResult.code;
+        if (code) {
+            document.getElementById('buscador').value = code;
+            toggleCamara();
+            procesarBusqueda(code);
+        }
+    });
+
+    // --- LÓGICA DE NAVEGACIÓN Y ENTER ---
+    function procesarBusqueda(codigo) {
+        const p = dbProductos.find(x => x.cod === codigo);
+        if (p) {
+            seleccionar(p.cod);
+        } else {
+            esAlta = true;
+            document.getElementById('formAlta').style.display = 'block';
+            document.getElementById('card').style.display = 'none';
+            setTimeout(() => document.getElementById('altaNombre').focus(), 300);
+        }
     }
 
-    function teclaBuscador(e) { if (e.key === "Enter") { procesarBusqueda(document.getElementById('buscador').value.trim()); } }
+    // LISTENER BUSCADOR
+    document.getElementById('buscador').addEventListener('keyup', function(e) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            procesarBusqueda(this.value.trim());
+        }
+        filtrarSugerencias(this.value);
+    });
 
+    // LISTENER CANTIDAD
+    document.getElementById('cantHoy').addEventListener('keyup', function(e) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            document.getElementById('precioHoy').focus();
+            document.getElementById('precioHoy').select();
+        }
+    });
+
+    // LISTENER PRECIO COSTO
+    document.getElementById('precioHoy').addEventListener('keyup', function(e) {
+        compararPrecios();
+        if (e.key === "Enter") {
+            e.preventDefault();
+            if (esAlta) {
+                document.getElementById('altaPublico').focus();
+                document.getElementById('altaPublico').select();
+            } else if (seleccionado) {
+                agregarALista();
+            }
+        }
+    });
+
+    // LISTENER ALTA NOMBRE
+    document.getElementById('altaNombre').addEventListener('keyup', function(e) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            document.getElementById('cantHoy').focus();
+            document.getElementById('cantHoy').select();
+        }
+    });
+
+    // LISTENER PRECIO VENTA
+    document.getElementById('altaPublico').addEventListener('keyup', function(e) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            finalizarAlta();
+        }
+    });
+
+    // --- FUNCIONES CORE ---
     function seleccionar(codigo) {
         esAlta = false;
         seleccionado = dbProductos.find(p => p.cod === codigo);
@@ -250,58 +267,46 @@
         document.getElementById('txtNombre').innerText = seleccionado.nombre;
         document.getElementById('txtProvAnt').innerText = `ULT. PROV: ${seleccionado.proveedor || 'N/A'}`;
         document.getElementById('txtCostoAnt').innerText = fmt(seleccionado.costo);
-        document.getElementById('cantHoy').focus();
-        document.getElementById('cantHoy').select();
+        setTimeout(() => {
+            document.getElementById('cantHoy').focus();
+            document.getElementById('cantHoy').select();
+        }, 300);
     }
 
-    function comparar() {
+    function compararPrecios() {
         const nPrecio = parseFloat(document.getElementById('precioHoy').value) || 0;
-        if(esAlta) { document.getElementById('altaPublico').value = Math.round(nPrecio * 1.30); }
+        if(esAlta) document.getElementById('altaPublico').value = Math.round(nPrecio * 1.30);
         if (seleccionado) {
             const elDif = document.getElementById('txtDif');
             const dif = nPrecio - seleccionado.costo;
             if (nPrecio === 0) elDif.innerText = "";
-            else if (dif < 0) { elDif.innerText = `BAJA ${fmt(Math.abs(dif))}`; elDif.style.color = "#27ae60"; }
-            else if (dif > 0) { elDif.innerText = `SUBE ${fmt(dif)}`; elDif.style.color = "var(--rojo-intenso)"; }
-            else { elDif.innerText = "IGUAL"; elDif.style.color = "#666"; }
+            else if (dif < 0) { elDif.innerText = `BAJA ${fmt(Math.abs(dif))}`; elDif.style.color = "green"; }
+            else if (dif > 0) { elDif.innerText = `SUBE ${fmt(dif)}`; elDif.style.color = "red"; }
+            else { elDif.innerText = "IGUAL"; elDif.style.color = "gray"; }
         }
     }
 
-    function teclaPrecio(e) {
-        if (e.key === "Enter") {
-            if (esAlta) { document.getElementById('altaPublico').focus(); document.getElementById('altaPublico').select(); }
-            else if(seleccionado) { agregarALista(); }
-        }
-    }
-
-    function teclaVentaFinal(e) {
-        if (e.key === "Enter") {
-            const nPrecio = parseFloat(document.getElementById('precioHoy').value);
-            const nuevo = {
-                cod: document.getElementById('buscador').value || "000",
-                nombre: document.getElementById('altaNombre').value.toUpperCase(),
-                costo: nPrecio,
-                venta: parseFloat(document.getElementById('altaPublico').value) || Math.round(nPrecio * 1.30),
-                proveedor: document.getElementById('provActual').value,
-                depto: document.getElementById('catActual').value
-            };
-            if(!dbProductos.find(x => x.cod === nuevo.cod)) {
-                dbProductos.push(nuevo);
-                localStorage.setItem('db_eleventa', JSON.stringify(dbProductos));
-            }
-            seleccionado = nuevo;
-            agregarALista();
-        }
+    function finalizarAlta() {
+        const nPrecio = parseFloat(document.getElementById('precioHoy').value) || 0;
+        const nuevo = {
+            cod: document.getElementById('buscador').value || "000",
+            nombre: document.getElementById('altaNombre').value.toUpperCase(),
+            costo: nPrecio,
+            venta: parseFloat(document.getElementById('altaPublico').value) || Math.round(nPrecio * 1.30),
+            proveedor: document.getElementById('provActual').value,
+            depto: document.getElementById('catActual').value
+        };
+        dbProductos.push(nuevo);
+        localStorage.setItem('db_eleventa', JSON.stringify(dbProductos));
+        seleccionado = nuevo;
+        agregarALista();
     }
 
     function agregarALista() {
         const nPrecio = parseFloat(document.getElementById('precioHoy').value) || seleccionado.costo;
         const cant = parseInt(document.getElementById('cantHoy').value) || 1;
         miLista.push({
-            cod: seleccionado.cod, nombre: seleccionado.nombre, costo: nPrecio,
-            venta: esAlta ? seleccionado.venta : Math.round(nPrecio * 1.30),
-            cant: cant, total: nPrecio * cant,
-            prov: document.getElementById('provActual').value, depto: document.getElementById('catActual').value
+            nombre: seleccionado.nombre, costo: nPrecio, cant: cant, total: nPrecio * cant
         });
         renderLista();
         limpiar();
@@ -312,16 +317,10 @@
         let total = 0;
         tabla.innerHTML = miLista.map((item, i) => {
             total += item.total;
-            return `<tr>
-                <td><b>${item.nombre}</b><br><small>${item.cant} pz x ${fmt(item.costo)}</small></td>
-                <td align="right"><b>${fmt(item.total)}</b></td>
-                <td align="right" width="30"><button onclick="eliminar(${i})" style="border:none; background:none; color:red; cursor:pointer">✕</button></td>
-            </tr>`;
+            return `<tr><td><b>${item.nombre}</b><br><small>${item.cant} pz x ${fmt(item.costo)}</small></td><td align="right"><b>${fmt(item.total)}</b></td></tr>`;
         }).join('');
         document.getElementById('sumaTotal').innerText = fmt(total);
     }
-
-    function eliminar(i) { miLista.splice(i, 1); renderLista(); }
 
     function limpiar() {
         document.getElementById('card').style.display = 'none';
@@ -331,8 +330,28 @@
         document.getElementById('cantHoy').value = "1";
         document.getElementById('altaNombre').value = "";
         document.getElementById('altaPublico').value = "";
+        esAlta = false; seleccionado = null;
         document.getElementById('buscador').focus();
-        seleccionado = null; esAlta = false;
+    }
+
+    function filtrarSugerencias(q) {
+        const panel = document.getElementById('panelSugerencias');
+        if (q.length < 3) { panel.style.display = 'none'; return; }
+        const f = dbProductos.filter(p => p.nombre.toLowerCase().includes(q.toLowerCase()) || p.cod.includes(q)).slice(0, 5);
+        if (f.length > 0) {
+            panel.innerHTML = f.map(p => `<div class="sugerencia-item" onclick="seleccionar('${p.cod}')"><b>${p.cod}</b> - ${p.nombre}</div>`).join('');
+            panel.style.display = 'block';
+        } else { panel.style.display = 'none'; }
+    }
+
+    function descargarCSV() {
+        let csv = "Codigo,Descripcion,PrecioCosto,PrecioVenta,PrecioMayoreo,Inventario,Inv. Minimo,Departamento,Proveedor\n";
+        csv += dbProductos.map(p => `${p.cod},${p.nombre},${p.costo},${p.venta},0,0,0,${p.depto},${p.proveedor}`).join("\n");
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = "BD.csv";
+        a.click();
     }
 
     function importarCSV(event) {
@@ -343,32 +362,13 @@
             dbProductos = lineas.map(l => {
                 const c = l.split(",");
                 if(c.length < 4) return null;
-                return {
-                    cod: c[0].trim(), nombre: c[1].trim(),
-                    costo: parseFloat(c[2].replace('$','')) || 0,
-                    venta: parseFloat(c[3].replace('$','')) || 0,
-                    depto: c[7] ? c[7].trim() : 'General',
-                    proveedor: c[8] ? c[8].trim() : 'Varios'
-                };
+                return { cod: c[0].trim(), nombre: c[1].trim(), costo: parseFloat(c[2]) || 0, venta: parseFloat(c[3]) || 0, depto: c[7] || 'General', proveedor: c[8] || 'Varios' };
             }).filter(p => p);
             localStorage.setItem('db_eleventa', JSON.stringify(dbProductos));
             alert("Base de datos cargada.");
         };
         lector.readAsText(archivo);
     }
-
-    function descargarCSV() {
-        if(dbProductos.length === 0) return alert("No hay productos");
-        let csv = "Codigo,Descripcion,PrecioCosto,PrecioVenta,PrecioMayoreo,Inventario,Inv. Minimo,Departamento,Proveedor\n";
-        csv += dbProductos.map(p => `${p.cod},${p.nombre},${p.costo},${p.venta},0,0,0,${p.depto || 'Varios'},${p.proveedor || 'Varios'}`).join("\n");
-        const blob = new Blob([csv], { type: 'text/csv' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `BD.csv`;
-        a.click();
-    }
-
-    function saltoEnter(e, id) { if(e.key === "Enter") { e.preventDefault(); document.getElementById(id).focus(); if(document.getElementById(id).tagName === "INPUT") document.getElementById(id).select(); } }
 </script>
 </body>
 </html>
