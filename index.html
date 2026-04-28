@@ -18,15 +18,16 @@
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
             background-color: var(--grosella-negra);
-            display: flex; justify-content: center; padding: 20px; margin: 0; min-height: 100vh;
+            display: flex; justify-content: center; padding: 10px; margin: 0; min-height: 100vh;
         }
 
         .container {
-            width: 100%; max-width: 500px; background: white; padding: 25px;
-            border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); position: relative;
+            width: 100%; max-width: 500px; background: white; padding: 15px; /* Ajustado padding */
+            border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); 
+            height: fit-content; /* El recuadro blanco solo ocupará lo necesario */
+            align-self: flex-start; margin-top: 20px;
         }
 
-        /* --- NUEVO PANEL DE ACCIONES SUPERIOR --- */
         .top-bar {
             display: flex;
             justify-content: space-between;
@@ -42,13 +43,11 @@
         }
         .icon-btn:hover { color: var(--rojo-intenso); transform: scale(1.1); }
         
-        /* Estilo especial para resaltar el botón de cámara */
         .cam-btn { color: var(--grosella-negra); font-size: 22px; }
         .cam-btn:hover { color: var(--naranja); }
 
-        h2 { text-align: center; color: var(--grosella-negra); font-weight: 900; margin: 10px 0 25px 0; }
+        h2 { text-align: center; color: var(--grosella-negra); font-weight: 900; margin: 10px 0 20px 0; }
 
-        /* VISOR DE CÁMARA MEJORADO */
         #scanner-container {
             display: none; width: 100%; height: 200px; background: black;
             border-radius: 15px; overflow: hidden; margin-bottom: 15px; position: relative;
@@ -59,7 +58,6 @@
             background: red; box-shadow: 0 0 8px red; z-index: 10;
         }
 
-        /* FILAS DE DATOS */
         .config-bar { display: flex; gap: 8px; margin-bottom: 15px; }
         select { flex: 1; padding: 10px; border-radius: 10px; border: 2px solid #eee; font-size: 13px; outline: none; }
 
@@ -71,7 +69,6 @@
         input { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 10px; font-size: 14px; box-sizing: border-box; outline: none; }
         input:focus { border-color: var(--naranja); background-color: #fffdfb; }
 
-        /* PANELES DE INFORMACIÓN */
         .sugerencias-panel {
             position: absolute; top: 100%; left: 0; right: 0; background: white;
             border: 1px solid #eee; z-index: 100; display: none; border-radius: 12px;
@@ -99,7 +96,7 @@
 
 <div class="container">
     <div class="top-bar">
-        <button class="icon-btn cam-btn" onclick="encenderCamara()" title="Escanear con Cámara">
+        <button class="icon-btn cam-btn" onclick="toggleCamara()" title="Alternar Cámara">
             <i class="fa-solid fa-camera"></i>
         </button>
         
@@ -180,41 +177,49 @@
 </div>
 
 <script>
-    // --- LÓGICA DE NEGOCIO ---
     const fmt = (n) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(n);
     let dbProductos = JSON.parse(localStorage.getItem('db_eleventa')) || [];
     let miLista = [];
     let seleccionado = null;
     let esAlta = false;
+    let camaraActiva = false; // Estado de la cámara
 
-    // --- ESCÁNER ---
-    function encenderCamara() {
+    // --- FUNCIÓN DE CÁMARA MEJORADA ---
+    function toggleCamara() {
         const container = document.getElementById('scanner-container');
-        container.style.display = 'block';
-
-        Quagga.init({
-            inputStream: {
-                name: "Live",
-                type: "LiveStream",
-                target: container,
-                constraints: { facingMode: "environment" }
-            },
-            decoder: { readers: ["ean_reader", "ean_8_reader", "code_128_reader"] }
-        }, function(err) {
-            if (err) { alert("Cámara no disponible"); return; }
-            Quagga.start();
-        });
-
-        Quagga.onDetected((data) => {
-            const code = data.codeResult.code;
-            if (code) {
-                document.getElementById('buscador').value = code;
-                Quagga.stop();
-                container.style.display = 'none';
-                procesarBusqueda(code);
-            }
-        });
+        
+        if (camaraActiva) {
+            // APAGAR
+            Quagga.stop();
+            container.style.display = 'none';
+            camaraActiva = false;
+        } else {
+            // ENCENDER
+            container.style.display = 'block';
+            Quagga.init({
+                inputStream: {
+                    name: "Live",
+                    type: "LiveStream",
+                    target: container,
+                    constraints: { facingMode: "environment" }
+                },
+                decoder: { readers: ["ean_reader", "ean_8_reader", "code_128_reader"] }
+            }, function(err) {
+                if (err) { alert("Cámara no disponible"); return; }
+                Quagga.start();
+                camaraActiva = true;
+            });
+        }
     }
+
+    Quagga.onDetected((data) => {
+        const code = data.codeResult.code;
+        if (code) {
+            document.getElementById('buscador').value = code;
+            toggleCamara(); // Se apaga al detectar
+            procesarBusqueda(code);
+        }
+    });
 
     function procesarBusqueda(codigo) {
         const p = dbProductos.find(x => x.cod === codigo);
@@ -227,7 +232,6 @@
         }
     }
 
-    // --- RESTO DE FUNCIONES ---
     function filtrar() {
         const q = document.getElementById('buscador').value.toLowerCase();
         const panel = document.getElementById('panelSugerencias');
