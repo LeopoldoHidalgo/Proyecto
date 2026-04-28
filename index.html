@@ -3,268 +3,283 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestión de Pedidos - Business Pro</title>
-  <script src="https://unpkg.com/quagga/dist/quagga.min.js"></script>
+  <title>Verificador de Precios - Business Tool</title>
   
   <style>
-    /* --- PALETA KIOSKO PRO APLICADA --- */
+    /* --- PALETA DE COLORES CORPORATIVA --- */
     :root {
       --color-fondo: #2c3e50;      /* Gris Azulado Oscuro */
       --color-primario: #34495e;   /* Azul Grisáceo */
-      --color-acento: #2ecc71;     /* Verde Esmeralda */
-      --color-azul: #2980b9;       /* Azul Rey */
-      --blanco: #ffffff;
-      --error: #e74c3c;
+      --color-acento: #2ecc71;     /* Verde Esmeralda (Precios) */
+      --color-azul: #2980b9;       /* Azul Rey (Botones/Bordes) */
+      --color-texto: #333;
+    }
+    
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background-color: var(--grosella-negra);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
     }
 
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: var(--color-fondo);
-      color: var(--blanco);
-      margin: 0;
-      padding: 15px;
+    /* CONTENEDOR PRINCIPAL */
+    .kiosko-container {
+      width: 90%;
+      max-width: 850px;
+      background: var(--blanco);
+      padding: 60px;
+      border-radius: 40px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.5); 
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    h1 { color: var(--grosella-negra); font-size: 4rem; margin: 0; font-weight: 900; letter-spacing: -2px; }
+    .instruccion { font-size: 1.8rem; color: #7f8c8d; margin-bottom: 40px; }
+
+    /* ENTRADA DE TEXTO GIGANTE */
+    input[type="text"] {
+      width: 100%;
+      padding: 35px;
+      font-size: 3rem;
+      text-align: center;
+      border: 5px solid var(--gris-claro);
+      border-radius: 25px;
+      box-sizing: border-box;
+      outline: none;
+      background-color: var(--gris-claro);
+      color: var(--grosella-negra);
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--naranja);
+      background-color: #fff;
+      box-shadow: 0 0 30px rgba(239, 59, 51, 0.2);
+    }
+
+    /* PANTALLA DE RESULTADOS */
+    .display-precio {
+      display: none;
+      animation: fadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .nombre-producto { font-size: 3.5rem; color: var(--grosella-negra); margin: 0; font-weight: 800; line-height: 1; }
+    .precio-producto { font-size: 11rem; color: var(--rojo-intenso); margin: 10px 0; font-weight: 900; }
+
+    /* LISTA DE COINCIDENCIAS */
+    .contenedor-coincidencias {
+      display: none;
+      text-align: left;
+      max-height: 400px;
+      overflow-y: auto;
+      margin-top: 20px;
+    }
+
+    .item-coincidencia {
+      background: var(--gris-claro);
+      padding: 25px;
+      margin-bottom: 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 1.8rem;
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
       align-items: center;
     }
 
-    .container {
+    .btn-volver {
+      background-color: var(--grosella-negra);
+      margin-top: 30px;
       width: 100%;
-      max-width: 500px;
-      background: var(--blanco);
-      color: #333;
-      padding: 20px;
+      padding: 25px;
+      font-size: 1.8rem;
+      color: white;
+      border: none;
       border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
-
-    h2 { color: var(--color-primario); text-align: center; margin-top: 0; }
-
-    /* --- BUSCADOR Y CÁMARA --- */
-    .search-box {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    input[type="text"], input[type="number"], input[type="tel"] {
-      flex-grow: 1;
-      padding: 12px;
-      border: 2px solid #ddd;
-      border-radius: 10px;
-      outline: none;
-      font-size: 16px;
-    }
-
-    input:focus { border-color: var(--color-azul); }
-
-    .btn-icon {
-      background: var(--color-azul);
-      color: white;
-      border: none;
-      padding: 12px;
-      border-radius: 10px;
       cursor: pointer;
-      font-size: 18px;
-    }
-
-    #scanner-container {
-      width: 100%;
-      height: 250px;
-      background: black;
-      border-radius: 15px;
-      overflow: hidden;
-      margin-bottom: 15px;
-      display: none; /* Se activa con el botón de cámara */
-    }
-
-    /* --- TARJETA DE PRODUCTO --- */
-    .card {
-      background: #f8f9fa;
-      border-left: 8px solid var(--color-acento);
-      padding: 20px;
-      border-radius: 15px;
-      margin-top: 10px;
-      display: none;
-    }
-
-    .card h3 { margin: 0; color: var(--color-primario); }
-    .card p { margin: 5px 0; font-weight: bold; color: #666; }
-    .precio-highlight { font-size: 24px; color: var(--color-acento); display: block; margin: 10px 0; }
-
-    /* --- BOTONES DE ACCIÓN --- */
-    .btn-main {
-      width: 100%;
-      padding: 15px;
-      background: var(--color-acento);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-size: 18px;
       font-weight: bold;
-      cursor: pointer;
-      margin-top: 15px;
     }
 
-    .btn-main:active { transform: scale(0.98); }
-
-    .btn-secundario {
-      background: var(--color-primario);
-      margin-top: 10px;
-    }
-
-    /* --- CONTROLES SUPERIORES --- */
-    .top-bar {
-      width: 100%;
-      max-width: 500px;
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-
-    .gear-btn {
-      background: none;
-      border: none;
-      color: var(--blanco);
-      font-size: 24px;
-      opacity: 0.5;
-      cursor: pointer;
-    }
-
-    .oculto { display: none; }
+    /* BOTÓN ADMIN INVISIBLE */
+    .admin-gear { position: absolute; top: 10px; right: 10px; opacity: 0.02; background: none; border: none; font-size: 20px; cursor: pointer; }
+    .status-bar { position: absolute; bottom: 10px; width: 100%; text-align: center; color: rgba(255,255,255,0.3); font-size: 0.8rem; }
+    .oculto { display: none !important; }
+    @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
   </style>
 </head>
-<body>
+<body onload="inicializarApp()">
 
-  <div class="top-bar">
-    <span>Business Manager v2</span>
-    <button class="gear-btn" onclick="document.getElementById('inputCSV').click()">⚙️</button>
-  </div>
-  
-  <input type="file" id="inputCSV" style="display:none" accept=".csv" onchange="importarCSV(event)">
+  <button class="admin-gear" onclick="configurarCSV()">⚙️</button>
+  <div id="statusLabel" class="status-bar">Sincronizando...</div>
 
-  <div class="container">
-    <h2>Pedidos e Inventario</h2>
-
-    <div id="scanner-container"></div>
-
-    <div class="search-box">
-      <input type="text" id="buscador" placeholder="Escanea o escribe nombre..." onkeypress="manejarEnter(event)">
-      <button class="btn-icon" onclick="toggleCamara()">📷</button>
+  <div class="kiosko-container">
+    
+    <div id="pantallaCaptura">
+      <h1>PRECIO</h1>
+      <p class="instruccion">Escanee su producto</p>
+      <input type="text" id="lectorEntrada" placeholder="..." autofocus autocomplete="off">
     </div>
-
-    <div id="formAlta" class="oculto">
-      <p style="color: var(--color-azul); font-weight: bold;">🆕 PRODUCTO NUEVO</p>
-      <input type="text" id="altaNombre" placeholder="Nombre del producto" style="margin-bottom: 10px; width: 93%;">
-      <input type="tel" id="altaCosto" placeholder="Costo $" style="width: 93%;">
-      <button class="btn-main" onclick="guardarNuevo()">Registrar y Agregar</button>
+    
+    <div id="pantallaCoincidencias" class="contenedor-coincidencias">
+      <div id="listaCoincidencias"></div>
     </div>
-
-    <div id="card" class="card">
-      <h3 id="txtNombre">Nombre del Producto</h3>
-      <p id="txtProvAnt">Último Proveedor: N/A</p>
-      <span class="precio-highlight" id="txtCostoAnt">$0.00</span>
-      
-      <div style="display: flex; gap: 10px; align-items: center;">
-        <input type="number" id="cantHoy" placeholder="Cant." style="width: 70px;">
-        <input type="text" id="provHoy" placeholder="Proveedor actual..." style="flex-grow: 1;">
-      </div>
-      <button class="btn-main" onclick="confirmarPedido()">Agregar a la Lista</button>
-    </div>
+    
+    <div id="pantallaResultado" class="display-precio"></div>
+    
+    <button id="btnVolver" class="oculto btn-volver" onclick="restablecerPantalla()">CERRAR</button>
   </div>
 
   <script>
-    // --- LÓGICA DE DATOS ---
-    let dbProductos = JSON.parse(localStorage.getItem('db_eleventa')) || [];
-    let camaraActiva = false;
+    let productosRegistrados = {}; 
+    let temporizadorRegreso = null;
 
-    function manejarEnter(e) {
-      if(e.key === "Enter") procesarBusqueda(e.target.value);
+    async function inicializarApp() {
+      const url = localStorage.getItem('csv_master_url');
+      if (!url) {
+        alert("Configure el enlace CSV en el icono oculto superior.");
+        return;
+      }
+      await cargarDesdeSheets(url);
+      setInterval(() => cargarDesdeSheets(url), 1800000); 
     }
 
-    function importarCSV(event) {
-      const archivo = event.target.files[0];
-      if (!archivo) return;
-      const lector = new FileReader();
-      lector.onload = (e) => {
-        const contenido = e.target.result;
-        const filas = contenido.split(/\r?\n/).filter(f => f.trim() !== "").slice(1);
-        dbProductos = filas.map(f => {
-          const c = f.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-          return {
-            cod: c[0].replace(/"/g, '').trim().toLowerCase(),
-            nombre: c[1].replace(/"/g, '').trim(),
-            costo: parseFloat(c[2].replace(/"/g, '').replace('$', '')) || 0,
-            proveedor: c[4] ? c[4].replace(/"/g, '').trim() : ""
-          };
-        });
-        localStorage.setItem('db_eleventa', JSON.stringify(dbProductos));
-        alert("Base de datos cargada: " + dbProductos.length + " productos.");
-      };
-      lector.readAsText(archivo);
+    function configurarCSV() {
+      const url = prompt("Enlace CSV de Google Sheets:", localStorage.getItem('csv_master_url') || "");
+      if (url) {
+        localStorage.setItem('csv_master_url', url);
+        location.reload();
+      }
     }
 
-    function procesarBusqueda(codigo) {
-      const cod = codigo.toLowerCase().trim();
-      const p = dbProductos.find(x => x.cod === cod || x.nombre.toLowerCase().includes(cod));
+    async function cargarDesdeSheets(url) {
+      const statusLabel = document.getElementById("statusLabel");
+      try {
+        const cacheBuster = url + (url.includes('?') ? '&' : '?') + "t=" + new Date().getTime();
+        const res = await fetch(cacheBuster);
+        const data = await res.text();
+        localStorage.setItem('cache_csv_data', data);
+        procesarDatosCSV(data);
+        statusLabel.innerText = "Actualizado: " + new Date().toLocaleTimeString();
+      } catch (e) {
+        const cache = localStorage.getItem('cache_csv_data');
+        if (cache) procesarDatosCSV(cache);
+        statusLabel.innerText = "Modo Offline";
+      }
+    }
+
+    function procesarDatosCSV(data) {
+      // Filtrar líneas vacías y saltar encabezado
+      const filas = data.split(/\r?\n/).filter(f => f.trim() !== "").slice(1);
+      productosRegistrados = {};
       
-      if (p) {
-        document.getElementById('formAlta').classList.add('oculto');
-        document.getElementById('card').style.display = 'block';
-        document.getElementById('txtNombre').innerText = p.nombre;
-        document.getElementById('txtCostoAnt').innerText = `$${p.costo.toFixed(2)}`;
-        document.getElementById('txtProvAnt').innerText = `ULT. PROV: ${p.proveedor || 'N/A'}`;
-        document.getElementById('cantHoy').focus();
-      } else {
-        document.getElementById('card').style.display = 'none';
-        document.getElementById('formAlta').classList.remove('oculto');
-        document.getElementById('altaNombre').focus();
-      }
+      filas.forEach(f => {
+        const c = f.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/); 
+        if (c.length >= 4) { 
+          const cod = c[0].replace(/"/g, '').trim().toLowerCase();
+          // Limpiamos el precio de símbolos de moneda
+          let precioLimpio = c[3].replace(/"/g, '').replace('$', '').trim();
+          
+          productosRegistrados[cod] = {
+            nombre: c[1].replace(/"/g, '').trim(),
+            precio: parseFloat(precioLimpio) || 0
+          };
+        }
+      });
     }
 
-    // --- CÁMARA ---
-    function toggleCamara() {
-      const container = document.getElementById('scanner-container');
-      if (camaraActiva) {
-        Quagga.stop();
-        container.style.display = 'none';
-        camaraActiva = false;
+    function accionVerificar() {
+      const input = document.getElementById("lectorEntrada");
+      const valor = input.value.trim().toLowerCase();
+      if (!valor) return;
+
+      let coincidencias = [];
+      // Búsqueda exacta
+      if (productosRegistrados[valor]) {
+        coincidencias.push(productosRegistrados[valor]);
       } else {
-        container.style.display = 'block';
-        Quagga.init({
-          inputStream: { name: "Live", type: "LiveStream", target: container, constraints: { facingMode: "environment" } },
-          decoder: { readers: ["ean_reader", "code_128_reader"] }
-        }, (err) => {
-          if (err) { alert("Error cámara"); return; }
-          Quagga.start();
-          camaraActiva = true;
-        });
+        // Búsqueda por nombre
+        for (const cod in productosRegistrados) {
+          if (productosRegistrados[cod].nombre.toLowerCase().includes(valor)) {
+            coincidencias.push(productosRegistrados[cod]);
+          }
+        }
       }
+
+      document.getElementById("pantallaCaptura").classList.add("oculto");
+      document.getElementById("btnVolver").classList.remove("oculto");
+
+      if (coincidencias.length === 1) {
+        mostrarPrecio(coincidencias[0]);
+      } else if (coincidencias.length > 1) {
+        mostrarOpciones(coincidencias);
+      } else {
+        document.getElementById("pantallaResultado").style.display = "block";
+        document.getElementById("pantallaResultado").innerHTML = `<p style="font-size:3rem; color:var(--rojo-intenso);">NO ENCONTRADO</p>`;
+        iniciarAutoLimpieza();
+      }
+      input.value = "";
     }
 
-    Quagga.onDetected((data) => {
-      const code = data.codeResult.code;
-      document.getElementById('buscador').value = code;
-      toggleCamara();
-      procesarBusqueda(code);
+    function mostrarPrecio(prod) {
+      const resDiv = document.getElementById("pantallaResultado");
+      resDiv.style.display = "block";
+      resDiv.innerHTML = `
+        <p class="nombre-producto">${prod.nombre}</p>
+        <p class="precio-producto">$${prod.precio.toFixed(2)}</p>
+      `;
+      iniciarAutoLimpieza();
+    }
+
+    function mostrarOpciones(lista) {
+      const pOpc = document.getElementById("pantallaCoincidencias");
+      const listaDiv = document.getElementById("listaCoincidencias");
+      pOpc.style.display = "block";
+      listaDiv.innerHTML = `<p style="text-align:center; font-size:1.2rem; color:gray;">Varios encontrados:</p>`;
+      
+      lista.slice(0, 4).forEach(prod => { // Limitamos a 4 para no romper el diseño
+        const div = document.createElement("div");
+        div.className = "item-coincidencia";
+        div.innerHTML = `<span>${prod.nombre}</span> <b>$${prod.precio.toFixed(2)}</b>`;
+        div.onclick = () => {
+          pOpc.style.display = "none";
+          mostrarPrecio(prod);
+        };
+        listaDiv.appendChild(div);
+      });
+      iniciarAutoLimpieza();
+    }
+
+    function iniciarAutoLimpieza() {
+      if (temporizadorRegreso) clearTimeout(temporizadorRegreso);
+      temporizadorRegreso = setTimeout(restablecerPantalla, 8000); // 8 segundos
+    }
+
+    function restablecerPantalla() {
+      if (temporizadorRegreso) clearTimeout(temporizadorRegreso);
+      document.getElementById("pantallaResultado").style.display = "none";
+      document.getElementById("pantallaCoincidencias").style.display = "none";
+      document.getElementById("btnVolver").classList.add("oculto");
+      document.getElementById("pantallaCaptura").classList.remove("oculto");
+      document.getElementById("lectorEntrada").focus();
+    }
+
+    document.getElementById("lectorEntrada").addEventListener("keypress", (e) => {
+      if (e.key === "Enter") accionVerificar();
     });
 
-    function confirmarPedido() {
-      alert("Producto agregado a la lista de pedidos");
-      restablecer();
-    }
-
-    function guardarNuevo() {
-      alert("Producto nuevo guardado en la base de datos");
-      restablecer();
-    }
-
-    function restablecer() {
-      document.getElementById('card').style.display = 'none';
-      document.getElementById('formAlta').classList.add('oculto');
-      document.getElementById('buscador').value = "";
-      document.getElementById('buscador').focus();
-    }
+    // Enfoque forzado
+    document.body.addEventListener("click", () => {
+      const pantallaCaptura = document.getElementById("pantallaCaptura");
+      if (!pantallaCaptura.classList.contains("oculto")) {
+        document.getElementById("lectorEntrada").focus();
+      }
+    });
   </script>
 </body>
 </html>
