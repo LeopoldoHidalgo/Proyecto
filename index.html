@@ -1,378 +1,270 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Business Tool - Control Panel</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
-    
-    <style>
-        :root {
-            --rojo-intenso: #8E0D3C;
-            --grosella-negra: #1D1842;
-            --naranja: #EF3B33;
-            --rosa: #FDA1A2;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Pedidos - Business Pro</title>
+  <script src="https://unpkg.com/quagga/dist/quagga.min.js"></script>
+  
+  <style>
+    /* --- PALETA KIOSKO PRO APLICADA --- */
+    :root {
+      --color-fondo: #2c3e50;      /* Gris Azulado Oscuro */
+      --color-primario: #34495e;   /* Azul Grisáceo */
+      --color-acento: #2ecc71;     /* Verde Esmeralda */
+      --color-azul: #2980b9;       /* Azul Rey */
+      --blanco: #ffffff;
+      --error: #e74c3c;
+    }
 
-        body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background-color: var(--grosella-negra);
-            display: flex; justify-content: center; padding: 10px; margin: 0; min-height: 100vh;
-        }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--color-fondo);
+      color: var(--blanco);
+      margin: 0;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-        .container {
-            width: 100%; max-width: 500px; background: white; padding: 15px; /* Ajustado padding */
-            border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); 
-            height: fit-content; /* El recuadro blanco solo ocupará lo necesario */
-            align-self: flex-start; margin-top: 20px;
-        }
+    .container {
+      width: 100%;
+      max-width: 500px;
+      background: var(--blanco);
+      color: #333;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
 
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
+    h2 { color: var(--color-primario); text-align: center; margin-top: 0; }
 
-        .header-actions { display: flex; gap: 15px; }
+    /* --- BUSCADOR Y CÁMARA --- */
+    .search-box {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
 
-        .icon-btn { 
-            background: none; border: none; font-size: 20px; 
-            color: #ccc; cursor: pointer; transition: 0.3s;
-        }
-        .icon-btn:hover { color: var(--rojo-intenso); transform: scale(1.1); }
-        
-        .cam-btn { color: var(--grosella-negra); font-size: 22px; }
-        .cam-btn:hover { color: var(--naranja); }
+    input[type="text"], input[type="number"], input[type="tel"] {
+      flex-grow: 1;
+      padding: 12px;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      outline: none;
+      font-size: 16px;
+    }
 
-        h2 { text-align: center; color: var(--grosella-negra); font-weight: 900; margin: 10px 0 20px 0; }
+    input:focus { border-color: var(--color-azul); }
 
-        #scanner-container {
-            display: none; width: 100%; height: 200px; background: black;
-            border-radius: 15px; overflow: hidden; margin-bottom: 15px; position: relative;
-        }
-        #scanner-container video { width: 100%; height: 100%; object-fit: cover; }
-        .scanner-laser {
-            position: absolute; top: 50%; left: 10%; right: 10%; height: 2px;
-            background: red; box-shadow: 0 0 8px red; z-index: 10;
-        }
+    .btn-icon {
+      background: var(--color-azul);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 18px;
+    }
 
-        .config-bar { display: flex; gap: 8px; margin-bottom: 15px; }
-        select { flex: 1; padding: 10px; border-radius: 10px; border: 2px solid #eee; font-size: 13px; outline: none; }
+    #scanner-container {
+      width: 100%;
+      height: 250px;
+      background: black;
+      border-radius: 15px;
+      overflow: hidden;
+      margin-bottom: 15px;
+      display: none; /* Se activa con el botón de cámara */
+    }
 
-        .search-row { display: flex; gap: 8px; margin-bottom: 10px; }
-        .group-busqueda { flex: 2; position: relative; }
-        .group-input { width: 80px; }
-        
-        label { font-size: 10px; font-weight: 800; color: var(--rojo-intenso); display: block; margin-bottom: 4px; text-transform: uppercase; }
-        input { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 10px; font-size: 14px; box-sizing: border-box; outline: none; }
-        input:focus { border-color: var(--naranja); background-color: #fffdfb; }
+    /* --- TARJETA DE PRODUCTO --- */
+    .card {
+      background: #f8f9fa;
+      border-left: 8px solid var(--color-acento);
+      padding: 20px;
+      border-radius: 15px;
+      margin-top: 10px;
+      display: none;
+    }
 
-        .sugerencias-panel {
-            position: absolute; top: 100%; left: 0; right: 0; background: white;
-            border: 1px solid #eee; z-index: 100; display: none; border-radius: 12px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15); max-height: 200px; overflow-y: auto;
-        }
-        .sugerencia-item { padding: 12px; border-bottom: 1px solid #f9f9f9; cursor: pointer; font-size: 13px; }
-        .sugerencia-item:hover { background: var(--rosa); }
+    .card h3 { margin: 0; color: var(--color-primario); }
+    .card p { margin: 5px 0; font-weight: bold; color: #666; }
+    .precio-highlight { font-size: 24px; color: var(--color-acento); display: block; margin: 10px 0; }
 
-        #formAlta { display: none; background: #fff5f5; padding: 15px; border-radius: 15px; border: 2px dashed var(--rosa); margin: 15px 0; }
-        .card-info { background: #f8fafc; border-radius: 15px; padding: 15px; margin: 15px 0; border-left: 5px solid var(--grosella-negra); display: none; }
+    /* --- BOTONES DE ACCIÓN --- */
+    .btn-main {
+      width: 100%;
+      padding: 15px;
+      background: var(--color-acento);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 15px;
+    }
 
-        .total-header { margin-top: 20px; padding: 15px 0; border-top: 2px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-        .total-monto { font-size: 1.8rem; color: var(--grosella-negra); font-weight: 900; }
-        
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        td { padding: 10px 5px; font-size: 14px; border-bottom: 1px solid #f0f0f0; }
+    .btn-main:active { transform: scale(0.98); }
 
-        .btn-action { width: 100%; padding: 15px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .btn-blue { background: var(--rojo-intenso); color: white; }
+    .btn-secundario {
+      background: var(--color-primario);
+      margin-top: 10px;
+    }
 
-        @media print { .top-bar, .config-bar, .search-row, #formAlta, .card-info, .btn-action, .btn-del, #scanner-container { display: none !important; } .container { box-shadow: none; max-width: 100%; } }
-    </style>
+    /* --- CONTROLES SUPERIORES --- */
+    .top-bar {
+      width: 100%;
+      max-width: 500px;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .gear-btn {
+      background: none;
+      border: none;
+      color: var(--blanco);
+      font-size: 24px;
+      opacity: 0.5;
+      cursor: pointer;
+    }
+
+    .oculto { display: none; }
+  </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="top-bar">
-        <button class="icon-btn cam-btn" onclick="toggleCamara()" title="Alternar Cámara">
-            <i class="fa-solid fa-camera"></i>
-        </button>
-        
-        <div class="header-actions">
-            <button class="icon-btn" onclick="descargarCSV()" title="Descargar BD"><i class="fa-solid fa-cloud-arrow-down"></i></button>
-            <button class="icon-btn" onclick="document.getElementById('inputArchivo').click()" title="Configuración / Cargar CSV"><i class="fa-solid fa-gear"></i></button>
-        </div>
-    </div>
-    
-    <input type="file" id="inputArchivo" style="display:none" accept=".csv" onchange="importarCSV(event)">
+  <div class="top-bar">
+    <span>Business Manager v2</span>
+    <button class="gear-btn" onclick="document.getElementById('inputCSV').click()">⚙️</button>
+  </div>
+  
+  <input type="file" id="inputCSV" style="display:none" accept=".csv" onchange="importarCSV(event)">
 
-    <h2>🛒 Compra y Alta</h2>
-    
-    <div id="scanner-container"><div class="scanner-laser"></div></div>
+  <div class="container">
+    <h2>Pedidos e Inventario</h2>
 
-    <div class="config-bar">
-        <select id="provActual">
-            <option value="Zorro Abarrotero">Zorro Abarrotero</option>
-            <option value="Aurrera">Aurrera</option>
-            <option value="Walmart">Walmart</option>
-            <option value="Coca-Cola">Coca-Cola</option>
-        </select>
-        <select id="catActual">
-            <option value="Abarrotes">Abarrotes</option>
-            <option value="Lacteos">Lacteos</option>
-            <option value="Bebidas">Bebidas</option>
-            <option value="Limpieza">Limpieza</option>
-        </select>
+    <div id="scanner-container"></div>
+
+    <div class="search-box">
+      <input type="text" id="buscador" placeholder="Escanea o escribe nombre..." onkeypress="manejarEnter(event)">
+      <button class="btn-icon" onclick="toggleCamara()">📷</button>
     </div>
 
-    <div class="search-row">
-        <div class="group-busqueda">
-            <label>Codigo de Barras:</label>
-            <input type="text" id="buscador" placeholder="Escribe o escanea..." oninput="filtrar()" onkeydown="teclaBuscador(event)" autocomplete="off">
-            <div id="panelSugerencias" class="sugerencias-panel"></div>
-        </div>
-        <div class="group-input">
-            <label>Cant:</label>
-            <input type="number" id="cantHoy" value="1" onkeydown="saltoEnter(event, 'precioHoy')">
-        </div>
-        <div class="group-input">
-            <label>Costo:</label>
-            <input type="number" id="precioHoy" placeholder="0.00" onkeydown="teclaPrecio(event)" oninput="comparar()">
-        </div>
+    <div id="formAlta" class="oculto">
+      <p style="color: var(--color-azul); font-weight: bold;">🆕 PRODUCTO NUEVO</p>
+      <input type="text" id="altaNombre" placeholder="Nombre del producto" style="margin-bottom: 10px; width: 93%;">
+      <input type="tel" id="altaCosto" placeholder="Costo $" style="width: 93%;">
+      <button class="btn-main" onclick="guardarNuevo()">Registrar y Agregar</button>
     </div>
 
-    <div id="formAlta">
-        <label style="color:var(--naranja)">✨ Nombre del Producto:</label>
-        <input type="text" id="altaNombre" placeholder="Descripción completa" onkeydown="saltoEnter(event, 'cantHoy')">
-        <div style="margin-top:10px">
-            <label>Precio Venta Sugerido:</label>
-            <input type="number" id="altaPublico" placeholder="0.00" onkeydown="teclaVentaFinal(event)">
-        </div>
+    <div id="card" class="card">
+      <h3 id="txtNombre">Nombre del Producto</h3>
+      <p id="txtProvAnt">Último Proveedor: N/A</p>
+      <span class="precio-highlight" id="txtCostoAnt">$0.00</span>
+      
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <input type="number" id="cantHoy" placeholder="Cant." style="width: 70px;">
+        <input type="text" id="provHoy" placeholder="Proveedor actual..." style="flex-grow: 1;">
+      </div>
+      <button class="btn-main" onclick="confirmarPedido()">Agregar a la Lista</button>
     </div>
+  </div>
 
-    <div id="card" class="card-info">
-        <div style="display: flex; justify-content: space-between;">
-            <div>
-                <div id="txtNombre" style="font-weight:800; color: var(--grosella-negra);"></div>
-                <div id="txtProvAnt" style="font-size:11px; color:#666; margin-top:4px;"></div>
-            </div>
-            <div style="text-align: right;">
-                <label>Anterior</label>
-                <span id="txtCostoAnt" style="font-size: 1.1rem; font-weight: 800;">$0.00</span>
-                <div id="txtDif" style="font-size: 0.7rem;"></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="total-header">
-        <span style="font-weight:bold">Total Compra</span>
-        <span class="total-monto" id="sumaTotal">$0.00</span>
-    </div>
-    
-    <table id="listaTabla"></table>
-
-    <button class="btn-action btn-blue" onclick="window.print()"><i class="fa-solid fa-print"></i> Imprimir Ticket</button>
-</div>
-
-<script>
-    const fmt = (n) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(n);
+  <script>
+    // --- LÓGICA DE DATOS ---
     let dbProductos = JSON.parse(localStorage.getItem('db_eleventa')) || [];
-    let miLista = [];
-    let seleccionado = null;
-    let esAlta = false;
-    let camaraActiva = false; // Estado de la cámara
+    let camaraActiva = false;
 
-    // --- FUNCIÓN DE CÁMARA MEJORADA ---
-    function toggleCamara() {
-        const container = document.getElementById('scanner-container');
-        
-        if (camaraActiva) {
-            // APAGAR
-            Quagga.stop();
-            container.style.display = 'none';
-            camaraActiva = false;
-        } else {
-            // ENCENDER
-            container.style.display = 'block';
-            Quagga.init({
-                inputStream: {
-                    name: "Live",
-                    type: "LiveStream",
-                    target: container,
-                    constraints: { facingMode: "environment" }
-                },
-                decoder: { readers: ["ean_reader", "ean_8_reader", "code_128_reader"] }
-            }, function(err) {
-                if (err) { alert("Cámara no disponible"); return; }
-                Quagga.start();
-                camaraActiva = true;
-            });
-        }
-    }
-
-    Quagga.onDetected((data) => {
-        const code = data.codeResult.code;
-        if (code) {
-            document.getElementById('buscador').value = code;
-            toggleCamara(); // Se apaga al detectar
-            procesarBusqueda(code);
-        }
-    });
-
-    function procesarBusqueda(codigo) {
-        const p = dbProductos.find(x => x.cod === codigo);
-        if (p) { seleccionar(p.cod); } 
-        else {
-            esAlta = true;
-            document.getElementById('formAlta').style.display = 'block';
-            document.getElementById('card').style.display = 'none';
-            document.getElementById('altaNombre').focus();
-        }
-    }
-
-    function filtrar() {
-        const q = document.getElementById('buscador').value.toLowerCase();
-        const panel = document.getElementById('panelSugerencias');
-        if (q.length < 2) { panel.style.display = 'none'; return; }
-        const f = dbProductos.filter(p => p.nombre.toLowerCase().includes(q) || (p.cod && p.cod.includes(q))).slice(0, 5);
-        if (f.length > 0) {
-            panel.innerHTML = f.map(p => `<div class="sugerencia-item" onclick="seleccionar('${p.cod}')"><b>${p.cod}</b> - ${p.nombre}</div>`).join('');
-            panel.style.display = 'block';
-        } else { panel.style.display = 'none'; }
-    }
-
-    function teclaBuscador(e) { if (e.key === "Enter") { procesarBusqueda(document.getElementById('buscador').value.trim()); } }
-
-    function seleccionar(codigo) {
-        esAlta = false;
-        seleccionado = dbProductos.find(p => p.cod === codigo);
-        document.getElementById('panelSugerencias').style.display = 'none';
-        document.getElementById('formAlta').style.display = 'none';
-        document.getElementById('card').style.display = 'block';
-        document.getElementById('txtNombre').innerText = seleccionado.nombre;
-        document.getElementById('txtProvAnt').innerText = `ULT. PROV: ${seleccionado.proveedor || 'N/A'}`;
-        document.getElementById('txtCostoAnt').innerText = fmt(seleccionado.costo);
-        document.getElementById('cantHoy').focus();
-        document.getElementById('cantHoy').select();
-    }
-
-    function comparar() {
-        const nPrecio = parseFloat(document.getElementById('precioHoy').value) || 0;
-        if(esAlta) { document.getElementById('altaPublico').value = Math.round(nPrecio * 1.30); }
-        if (seleccionado) {
-            const elDif = document.getElementById('txtDif');
-            const dif = nPrecio - seleccionado.costo;
-            if (nPrecio === 0) elDif.innerText = "";
-            else if (dif < 0) { elDif.innerText = `BAJA ${fmt(Math.abs(dif))}`; elDif.style.color = "#27ae60"; }
-            else if (dif > 0) { elDif.innerText = `SUBE ${fmt(dif)}`; elDif.style.color = "var(--rojo-intenso)"; }
-            else { elDif.innerText = "IGUAL"; elDif.style.color = "#666"; }
-        }
-    }
-
-    function teclaPrecio(e) {
-        if (e.key === "Enter") {
-            if (esAlta) { document.getElementById('altaPublico').focus(); document.getElementById('altaPublico').select(); }
-            else if(seleccionado) { agregarALista(); }
-        }
-    }
-
-    function teclaVentaFinal(e) {
-        if (e.key === "Enter") {
-            const nPrecio = parseFloat(document.getElementById('precioHoy').value);
-            const nuevo = {
-                cod: document.getElementById('buscador').value || "000",
-                nombre: document.getElementById('altaNombre').value.toUpperCase(),
-                costo: nPrecio,
-                venta: parseFloat(document.getElementById('altaPublico').value) || Math.round(nPrecio * 1.30),
-                proveedor: document.getElementById('provActual').value,
-                depto: document.getElementById('catActual').value
-            };
-            if(!dbProductos.find(x => x.cod === nuevo.cod)) {
-                dbProductos.push(nuevo);
-                localStorage.setItem('db_eleventa', JSON.stringify(dbProductos));
-            }
-            seleccionado = nuevo;
-            agregarALista();
-        }
-    }
-
-    function agregarALista() {
-        const nPrecio = parseFloat(document.getElementById('precioHoy').value) || seleccionado.costo;
-        const cant = parseInt(document.getElementById('cantHoy').value) || 1;
-        miLista.push({
-            cod: seleccionado.cod, nombre: seleccionado.nombre, costo: nPrecio,
-            venta: esAlta ? seleccionado.venta : Math.round(nPrecio * 1.30),
-            cant: cant, total: nPrecio * cant,
-            prov: document.getElementById('provActual').value, depto: document.getElementById('catActual').value
-        });
-        renderLista();
-        limpiar();
-    }
-
-    function renderLista() {
-        const tabla = document.getElementById('listaTabla');
-        let total = 0;
-        tabla.innerHTML = miLista.map((item, i) => {
-            total += item.total;
-            return `<tr>
-                <td><b>${item.nombre}</b><br><small>${item.cant} pz x ${fmt(item.costo)}</small></td>
-                <td align="right"><b>${fmt(item.total)}</b></td>
-                <td align="right" width="30"><button onclick="eliminar(${i})" style="border:none; background:none; color:red; cursor:pointer">✕</button></td>
-            </tr>`;
-        }).join('');
-        document.getElementById('sumaTotal').innerText = fmt(total);
-    }
-
-    function eliminar(i) { miLista.splice(i, 1); renderLista(); }
-
-    function limpiar() {
-        document.getElementById('card').style.display = 'none';
-        document.getElementById('formAlta').style.display = 'none';
-        document.getElementById('buscador').value = "";
-        document.getElementById('precioHoy').value = "";
-        document.getElementById('cantHoy').value = "1";
-        document.getElementById('altaNombre').value = "";
-        document.getElementById('altaPublico').value = "";
-        document.getElementById('buscador').focus();
-        seleccionado = null; esAlta = false;
+    function manejarEnter(e) {
+      if(e.key === "Enter") procesarBusqueda(e.target.value);
     }
 
     function importarCSV(event) {
-        const archivo = event.target.files[0];
-        const lector = new FileReader();
-        lector.onload = (e) => {
-            const lineas = e.target.result.split("\n").slice(1);
-            dbProductos = lineas.map(l => {
-                const c = l.split(",");
-                if(c.length < 4) return null;
-                return {
-                    cod: c[0].trim(), nombre: c[1].trim(),
-                    costo: parseFloat(c[2].replace('$','')) || 0,
-                    venta: parseFloat(c[3].replace('$','')) || 0,
-                    depto: c[7] ? c[7].trim() : 'General',
-                    proveedor: c[8] ? c[8].trim() : 'Varios'
-                };
-            }).filter(p => p);
-            localStorage.setItem('db_eleventa', JSON.stringify(dbProductos));
-            alert("Base de datos cargada.");
-        };
-        lector.readAsText(archivo);
+      const archivo = event.target.files[0];
+      if (!archivo) return;
+      const lector = new FileReader();
+      lector.onload = (e) => {
+        const contenido = e.target.result;
+        const filas = contenido.split(/\r?\n/).filter(f => f.trim() !== "").slice(1);
+        dbProductos = filas.map(f => {
+          const c = f.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+          return {
+            cod: c[0].replace(/"/g, '').trim().toLowerCase(),
+            nombre: c[1].replace(/"/g, '').trim(),
+            costo: parseFloat(c[2].replace(/"/g, '').replace('$', '')) || 0,
+            proveedor: c[4] ? c[4].replace(/"/g, '').trim() : ""
+          };
+        });
+        localStorage.setItem('db_eleventa', JSON.stringify(dbProductos));
+        alert("Base de datos cargada: " + dbProductos.length + " productos.");
+      };
+      lector.readAsText(archivo);
     }
 
-    function descargarCSV() {
-        if(dbProductos.length === 0) return alert("No hay productos");
-        let csv = "Codigo,Descripcion,PrecioCosto,PrecioVenta,PrecioMayoreo,Inventario,Inv. Minimo,Departamento,Proveedor\n";
-        csv += dbProductos.map(p => `${p.cod},${p.nombre},${p.costo},${p.venta},0,0,0,${p.depto || 'Varios'},${p.proveedor || 'Varios'}`).join("\n");
-        const blob = new Blob([csv], { type: 'text/csv' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `BD.csv`;
-        a.click();
+    function procesarBusqueda(codigo) {
+      const cod = codigo.toLowerCase().trim();
+      const p = dbProductos.find(x => x.cod === cod || x.nombre.toLowerCase().includes(cod));
+      
+      if (p) {
+        document.getElementById('formAlta').classList.add('oculto');
+        document.getElementById('card').style.display = 'block';
+        document.getElementById('txtNombre').innerText = p.nombre;
+        document.getElementById('txtCostoAnt').innerText = `$${p.costo.toFixed(2)}`;
+        document.getElementById('txtProvAnt').innerText = `ULT. PROV: ${p.proveedor || 'N/A'}`;
+        document.getElementById('cantHoy').focus();
+      } else {
+        document.getElementById('card').style.display = 'none';
+        document.getElementById('formAlta').classList.remove('oculto');
+        document.getElementById('altaNombre').focus();
+      }
     }
 
-    function saltoEnter(e, id) { if(e.key === "Enter") { e.preventDefault(); document.getElementById(id).focus(); if(document.getElementById(id).tagName === "INPUT") document.getElementById(id).select(); } }
-</script>
+    // --- CÁMARA ---
+    function toggleCamara() {
+      const container = document.getElementById('scanner-container');
+      if (camaraActiva) {
+        Quagga.stop();
+        container.style.display = 'none';
+        camaraActiva = false;
+      } else {
+        container.style.display = 'block';
+        Quagga.init({
+          inputStream: { name: "Live", type: "LiveStream", target: container, constraints: { facingMode: "environment" } },
+          decoder: { readers: ["ean_reader", "code_128_reader"] }
+        }, (err) => {
+          if (err) { alert("Error cámara"); return; }
+          Quagga.start();
+          camaraActiva = true;
+        });
+      }
+    }
+
+    Quagga.onDetected((data) => {
+      const code = data.codeResult.code;
+      document.getElementById('buscador').value = code;
+      toggleCamara();
+      procesarBusqueda(code);
+    });
+
+    function confirmarPedido() {
+      alert("Producto agregado a la lista de pedidos");
+      restablecer();
+    }
+
+    function guardarNuevo() {
+      alert("Producto nuevo guardado en la base de datos");
+      restablecer();
+    }
+
+    function restablecer() {
+      document.getElementById('card').style.display = 'none';
+      document.getElementById('formAlta').classList.add('oculto');
+      document.getElementById('buscador').value = "";
+      document.getElementById('buscador').focus();
+    }
+  </script>
 </body>
 </html>
