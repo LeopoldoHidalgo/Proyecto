@@ -8,24 +8,25 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
     
     <style>
+        /* --- UNIFICACIÓN CON PALETA VERIFICADOR --- */
         :root {
-            --rojo-intenso: #8E0D3C;
-            --grosella-negra: #1D1842;
-            --naranja: #EF3B33;
-            --rosa: #FDA1A2;
+            --color-fondo: #2c3e50;      /* Gris Azulado Oscuro */
+            --color-primario: #34495e;   /* Azul Grisáceo */
+            --color-acento: #2ecc71;     /* Verde Esmeralda (Éxito/Precios) */
+            --color-azul: #2980b9;       /* Azul Rey (Acciones) */
+            --blanco: #ffffff;
         }
 
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
-            background-color: var(--grosella-negra);
+            background-color: var(--color-fondo);
             display: flex; justify-content: center; padding: 10px; margin: 0; min-height: 100vh;
         }
 
         .container {
-            width: 100%; max-width: 500px; background: white; padding: 15px; /* Ajustado padding */
+            width: 100%; max-width: 500px; background: var(--blanco); padding: 20px;
             border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); 
-            height: fit-content; /* El recuadro blanco solo ocupará lo necesario */
-            align-self: flex-start; margin-top: 20px;
+            height: fit-content; align-self: flex-start; margin-top: 20px;
         }
 
         .top-bar {
@@ -39,24 +40,20 @@
 
         .icon-btn { 
             background: none; border: none; font-size: 20px; 
-            color: #ccc; cursor: pointer; transition: 0.3s;
+            color: #bdc3c7; cursor: pointer; transition: 0.3s;
         }
-        .icon-btn:hover { color: var(--rojo-intenso); transform: scale(1.1); }
+        .icon-btn:hover { color: var(--color-azul); transform: scale(1.1); }
         
-        .cam-btn { color: var(--grosella-negra); font-size: 22px; }
-        .cam-btn:hover { color: var(--naranja); }
+        .cam-btn { color: var(--color-primario); font-size: 22px; }
+        .cam-btn:hover { color: var(--color-acento); }
 
-        h2 { text-align: center; color: var(--grosella-negra); font-weight: 900; margin: 10px 0 20px 0; }
+        h2 { text-align: center; color: var(--color-primario); font-weight: 900; margin: 10px 0 20px 0; }
 
         #scanner-container {
             display: none; width: 100%; height: 200px; background: black;
             border-radius: 15px; overflow: hidden; margin-bottom: 15px; position: relative;
         }
         #scanner-container video { width: 100%; height: 100%; object-fit: cover; }
-        .scanner-laser {
-            position: absolute; top: 50%; left: 10%; right: 10%; height: 2px;
-            background: red; box-shadow: 0 0 8px red; z-index: 10;
-        }
 
         .config-bar { display: flex; gap: 8px; margin-bottom: 15px; }
         select { flex: 1; padding: 10px; border-radius: 10px; border: 2px solid #eee; font-size: 13px; outline: none; }
@@ -65,9 +62,10 @@
         .group-busqueda { flex: 2; position: relative; }
         .group-input { width: 80px; }
         
-        label { font-size: 10px; font-weight: 800; color: var(--rojo-intenso); display: block; margin-bottom: 4px; text-transform: uppercase; }
+        label { font-size: 10px; font-weight: 800; color: var(--color-azul); display: block; margin-bottom: 4px; text-transform: uppercase; }
+        
         input { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 10px; font-size: 14px; box-sizing: border-box; outline: none; }
-        input:focus { border-color: var(--naranja); background-color: #fffdfb; }
+        input:focus { border-color: var(--color-acento); background-color: #fafffb; }
 
         .sugerencias-panel {
             position: absolute; top: 100%; left: 0; right: 0; background: white;
@@ -75,19 +73,20 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.15); max-height: 200px; overflow-y: auto;
         }
         .sugerencia-item { padding: 12px; border-bottom: 1px solid #f9f9f9; cursor: pointer; font-size: 13px; }
-        .sugerencia-item:hover { background: var(--rosa); }
+        .sugerencia-item:hover { background: #e8f8f0; color: var(--color-acento); }
 
-        #formAlta { display: none; background: #fff5f5; padding: 15px; border-radius: 15px; border: 2px dashed var(--rosa); margin: 15px 0; }
-        .card-info { background: #f8fafc; border-radius: 15px; padding: 15px; margin: 15px 0; border-left: 5px solid var(--grosella-negra); display: none; }
+        #formAlta { display: none; background: #f0f7ff; padding: 15px; border-radius: 15px; border: 2px dashed var(--color-azul); margin: 15px 0; }
+        .card-info { background: #f8fafc; border-radius: 15px; padding: 15px; margin: 15px 0; border-left: 5px solid var(--color-acento); display: none; }
 
         .total-header { margin-top: 20px; padding: 15px 0; border-top: 2px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-        .total-monto { font-size: 1.8rem; color: var(--grosella-negra); font-weight: 900; }
+        .total-monto { font-size: 1.8rem; color: var(--color-acento); font-weight: 900; }
         
         table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        td { padding: 10px 5px; font-size: 14px; border-bottom: 1px solid #f0f0f0; }
+        td { padding: 10px 5px; font-size: 14px; border-bottom: 1px solid #f0f0f0; color: #333; }
 
-        .btn-action { width: 100%; padding: 15px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .btn-blue { background: var(--rojo-intenso); color: white; }
+        .btn-action { width: 100%; padding: 15px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
+        .btn-blue { background: var(--color-azul); color: white; }
+        .btn-blue:hover { background: var(--color-primario); }
 
         @media print { .top-bar, .config-bar, .search-row, #formAlta, .card-info, .btn-action, .btn-del, #scanner-container { display: none !important; } .container { box-shadow: none; max-width: 100%; } }
     </style>
@@ -110,7 +109,7 @@
 
     <h2>🛒 Compra y Alta</h2>
     
-    <div id="scanner-container"><div class="scanner-laser"></div></div>
+    <div id="scanner-container"></div>
 
     <div class="config-bar">
         <select id="provActual">
@@ -144,7 +143,7 @@
     </div>
 
     <div id="formAlta">
-        <label style="color:var(--naranja)">✨ Nombre del Producto:</label>
+        <label style="color:var(--color-azul)">✨ Nombre del Producto:</label>
         <input type="text" id="altaNombre" placeholder="Descripción completa" onkeydown="saltoEnter(event, 'cantHoy')">
         <div style="margin-top:10px">
             <label>Precio Venta Sugerido:</label>
@@ -155,19 +154,19 @@
     <div id="card" class="card-info">
         <div style="display: flex; justify-content: space-between;">
             <div>
-                <div id="txtNombre" style="font-weight:800; color: var(--grosella-negra);"></div>
+                <div id="txtNombre" style="font-weight:800; color: var(--color-primario);"></div>
                 <div id="txtProvAnt" style="font-size:11px; color:#666; margin-top:4px;"></div>
             </div>
             <div style="text-align: right;">
                 <label>Anterior</label>
-                <span id="txtCostoAnt" style="font-size: 1.1rem; font-weight: 800;">$0.00</span>
+                <span id="txtCostoAnt" style="font-size: 1.1rem; font-weight: 800; color: var(--color-azul);">$0.00</span>
                 <div id="txtDif" style="font-size: 0.7rem;"></div>
             </div>
         </div>
     </div>
 
     <div class="total-header">
-        <span style="font-weight:bold">Total Compra</span>
+        <span style="font-weight:bold; color: var(--color-primario);">Total Compra</span>
         <span class="total-monto" id="sumaTotal">$0.00</span>
     </div>
     
@@ -177,24 +176,21 @@
 </div>
 
 <script>
+    // La lógica de JavaScript se mantiene exactamente igual a la tuya para no romper ninguna función
     const fmt = (n) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(n);
     let dbProductos = JSON.parse(localStorage.getItem('db_eleventa')) || [];
     let miLista = [];
     let seleccionado = null;
     let esAlta = false;
-    let camaraActiva = false; // Estado de la cámara
+    let camaraActiva = false;
 
-    // --- FUNCIÓN DE CÁMARA MEJORADA ---
     function toggleCamara() {
         const container = document.getElementById('scanner-container');
-        
         if (camaraActiva) {
-            // APAGAR
             Quagga.stop();
             container.style.display = 'none';
             camaraActiva = false;
         } else {
-            // ENCENDER
             container.style.display = 'block';
             Quagga.init({
                 inputStream: {
@@ -216,7 +212,7 @@
         const code = data.codeResult.code;
         if (code) {
             document.getElementById('buscador').value = code;
-            toggleCamara(); // Se apaga al detectar
+            toggleCamara();
             procesarBusqueda(code);
         }
     });
@@ -266,7 +262,7 @@
             const dif = nPrecio - seleccionado.costo;
             if (nPrecio === 0) elDif.innerText = "";
             else if (dif < 0) { elDif.innerText = `BAJA ${fmt(Math.abs(dif))}`; elDif.style.color = "#27ae60"; }
-            else if (dif > 0) { elDif.innerText = `SUBE ${fmt(dif)}`; elDif.style.color = "var(--rojo-intenso)"; }
+            else if (dif > 0) { elDif.innerText = `SUBE ${fmt(dif)}`; elDif.style.color = "#e74c3c"; }
             else { elDif.innerText = "IGUAL"; elDif.style.color = "#666"; }
         }
     }
